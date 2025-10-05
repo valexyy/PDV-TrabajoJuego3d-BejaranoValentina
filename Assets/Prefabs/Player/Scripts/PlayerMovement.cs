@@ -2,24 +2,57 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Vector3 forceToApply;
-    private float timeSinceLastForce;
-    private float intervalTime;
+    #region Atributos
+    private Vector3 fuerzaPorAplicar;
+    private float tiempoDesdeUltimaFuerza;
+    private float intervaloTiempo;
+    private IMovementStrategy strategy;
+    private Player player;
+    #endregion
 
+    #region Ciclo de vida del script
     private void Start()
     {
-        forceToApply = new Vector3(0, 0, 300);
-        timeSinceLastForce = 0f;
-        intervalTime = 2f;
+        fuerzaPorAplicar = new Vector3(0, 0, 5f);
+        tiempoDesdeUltimaFuerza = 0f;
+        intervaloTiempo = 2f;
+
+        player = GetComponent<Player>();
+        if (player == null)
+        {
+            Debug.LogError("No se encontró el componente Player en el GameObject.");
+        }
+        SetStrategy(new AceletareMovement());
+    }
+
+    private void Update()
+    {
+        MovePlayer();
     }
 
     private void FixedUpdate()
     {
-        timeSinceLastForce += Time.fixedDeltaTime;
-        if (timeSinceLastForce >= intervalTime)
+        tiempoDesdeUltimaFuerza += Time.deltaTime;
+        if (tiempoDesdeUltimaFuerza >= intervaloTiempo)
         {
-           gameObject.GetComponent<Rigidbody>().AddForce(forceToApply);
-           timeSinceLastForce = 0f;
+            gameObject.GetComponent<Rigidbody>().AddForce(fuerzaPorAplicar, ForceMode.Impulse);
+            tiempoDesdeUltimaFuerza = 0f;
         }
     }
+    #endregion
+
+    #region Logica de la estrategia
+    public void SetStrategy(IMovementStrategy strategy)
+    {
+        this.strategy = strategy;
+    }
+
+    public void MovePlayer()
+    {
+        if (strategy != null && player != null)
+        {
+            strategy.Move(transform, player);
+        }
+    }
+    #endregion
 }
