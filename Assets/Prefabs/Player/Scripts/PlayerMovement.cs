@@ -2,57 +2,49 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    #region Atributos
+    private Player player;
+    private IMovementStrategy movementStrategy;
+
     private Vector3 fuerzaPorAplicar;
     private float tiempoDesdeUltimaFuerza;
     private float intervaloTiempo;
-    private IMovementStrategy strategy;
-    private Player player;
-    #endregion
 
-    #region Ciclo de vida del script
-    private void Start()
+    void Start()
     {
-        fuerzaPorAplicar = new Vector3(0, 0, 5f);
+        player = new Player(velocidad: 5f, aceleracion: 2f);
+        movementStrategy = new LateralMovement(); // Estrategia inicial
+
+        fuerzaPorAplicar = new Vector3(0, 0, 300f);
         tiempoDesdeUltimaFuerza = 0f;
         intervaloTiempo = 2f;
+    }
 
-        player = GetComponent<Player>();
-        if (player == null)
+    void Update()
+    {
+        float input = Input.GetAxis("Horizontal");
+        MovePlayer(input);
+    }
+
+    public void MovePlayer(float input)
+    {
+        if (movementStrategy != null && player != null)
         {
-            Debug.LogError("No se encontró el componente Player en el GameObject.");
+            movementStrategy.Move(transform, player, input);
         }
-        SetStrategy(new AceletareMovement());
     }
 
-    private void Update()
+    public void SetMovementStrategy(IMovementStrategy strategy)
     {
-        MovePlayer();
+        this.movementStrategy = strategy;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        tiempoDesdeUltimaFuerza += Time.deltaTime;
+        tiempoDesdeUltimaFuerza += Time.fixedDeltaTime;
         if (tiempoDesdeUltimaFuerza >= intervaloTiempo)
         {
-            gameObject.GetComponent<Rigidbody>().AddForce(fuerzaPorAplicar, ForceMode.Impulse);
+            GetComponent<Rigidbody>().AddForce(fuerzaPorAplicar);
             tiempoDesdeUltimaFuerza = 0f;
         }
     }
-    #endregion
-
-    #region Logica de la estrategia
-    public void SetStrategy(IMovementStrategy strategy)
-    {
-        this.strategy = strategy;
-    }
-
-    public void MovePlayer()
-    {
-        if (strategy != null && player != null)
-        {
-            strategy.Move(transform, player);
-        }
-    }
-    #endregion
 }

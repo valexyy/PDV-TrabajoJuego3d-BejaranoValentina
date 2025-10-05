@@ -1,13 +1,11 @@
+
 using UnityEngine;
 
-public class AceletareMovement : IMovementStrategy
+public class AcelerateMovement : IMovementStrategy
 {
-    private float velocidadActual = 0f;
-
-    public void Move(Transform transform, Player player)
+    public void Move(Transform transform, Player player, float input)
     {
-        velocidadActual += Input.GetAxis("Horizontal") * player.Aceleracion * Time.deltaTime;
-        player.Velocidad = Mathf.Clamp(velocidadActual, -player.Velocidad, player.Velocidad);
-        transform.Translate(velocidadActual * Time.deltaTime, 0, 0);
+        float movement = input * (player.Velocidad * player.Aceleracion) * Time.deltaTime;
+        transform.Translate(movement, 0, 0);
     }
 }
