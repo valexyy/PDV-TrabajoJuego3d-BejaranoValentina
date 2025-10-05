@@ -1,0 +1,25 @@
+# Archivos y carpetas generadas por Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Ss]napshots/
+[Pp]ackages/
+[Pp]ackages-lock.json
+
+# Archivos de soluciones y proyectos (si usas IDEs como Rider o Visual Studio)
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+.idea/
+.vs/
+.vscode/
+
+# Ignorar archivos de audio y video grandes
+#*.mp4
+#*.wav
